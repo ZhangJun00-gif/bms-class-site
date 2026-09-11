@@ -1,0 +1,48 @@
+ARG NODE_IMAGE=docker.io/library/node:22-bookworm-slim
+FROM ${NODE_IMAGE}
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+WORKDIR /app
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates openssl \
+  && rm -rf /var/lib/apt/lists/*
+RUN corepack enable
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
+COPY apps/api/package.json apps/api/package.json
+COPY apps/worker/package.json apps/worker/package.json
+COPY packages/ai-core/package.json packages/ai-core/package.json
+COPY packages/contracts/package.json packages/contracts/package.json
+COPY packages/daily-practice-core/package.json packages/daily-practice-core/package.json
+COPY packages/daily-practice-prisma/package.json packages/daily-practice-prisma/package.json
+COPY packages/knowledge-core/package.json packages/knowledge-core/package.json
+COPY packages/media-core/package.json packages/media-core/package.json
+COPY packages/quiz-core/package.json packages/quiz-core/package.json
+RUN pnpm install --frozen-lockfile
+
+COPY apps/api apps/api
+COPY apps/worker apps/worker
+COPY packages/ai-core packages/ai-core
+COPY packages/contracts packages/contracts
+COPY packages/daily-practice-core packages/daily-practice-core
+COPY packages/daily-practice-prisma packages/daily-practice-prisma
+COPY packages/knowledge-core packages/knowledge-core
+COPY packages/media-core packages/media-core
+COPY packages/quiz-core packages/quiz-core
+RUN pnpm --filter @bmc3/api prisma:generate \
+  && pnpm --filter @bmc3/ai-core build \
+  && pnpm --filter @bmc3/daily-practice-core build \
+  && pnpm --filter @bmc3/daily-practice-prisma build \
+  && pnpm --filter @bmc3/knowledge-core build \
+  && pnpm --filter @bmc3/media-core build \
+  && pnpm --filter @bmc3/quiz-core build \
+  && pnpm --filter @bmc3/api build \
+  && pnpm --filter @bmc3/worker build
+RUN install -d -o node -g node -m 0770 /data/uploads \
+  && install -d -o node -g node -m 0700 /data/knowledge-tmp \
+  && install -d -o node -g node -m 0700 /data/knowledge-import-tmp \
+  && install -d -o node -g node -m 0700 /data/quiz-import-tmp
+
+USER node
+CMD ["node", "apps/api/dist/main.js"]

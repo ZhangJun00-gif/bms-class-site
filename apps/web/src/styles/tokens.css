@@ -1,0 +1,81 @@
+/* 设计令牌：色彩、间距、圆角、阴影、层级、尺寸
+   美术方向：临床编辑风（Clinical Editorial）——现代医学期刊 × 研究机构门户 */
+:root {
+  /* 色彩：班徽藏青 + 医青 + 冷白 + 状态色 */
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-muted: #ecf1f7;
+  --surface-tint: #f7fafd;
+  --ink: #152238;
+  --ink-soft: #3a4763;
+  --muted: #67718c;
+  --primary: #26397d;
+  --primary-dark: #141f4b;
+  --primary-deep: #0d1737;
+  --primary-soft: #e9edfa;
+  --accent: #0f8a96;
+  --accent-dark: #0a6570;
+  --accent-vivid: #12a5b3;
+  --accent-soft: #e0f1f3;
+  --success: #257a54;
+  --success-bg: #e9f6ef;
+  --success-border: #b6dcc7;
+  --warning: #8a5a12;
+  --warning-bg: #fbf3e0;
+  --warning-border: #e8d09a;
+  --danger: #b03340;
+  --danger-bg: #fcecef;
+  --danger-border: #eeb9c1;
+  --info-bg: #e9f3f4;
+
+  /* 医学渐变 */
+  --gradient-primary: linear-gradient(135deg, #2d4390 0%, #1a2a5f 100%);
+  --gradient-accent: linear-gradient(120deg, var(--accent-vivid) 0%, var(--accent-dark) 100%);
+  --gradient-hairline: linear-gradient(90deg, var(--accent-vivid), var(--primary) 65%, transparent);
+  --gradient-hero: linear-gradient(160deg, #f8fbfe 0%, #eef3fa 58%, #e7eef8 100%);
+  --gradient-deep: linear-gradient(165deg, #1c2c66 0%, #101c46 70%, #0b1533 100%);
+
+  /* 边框与分隔 */
+  --border: #dde4ee;
+  --border-strong: #c4cddd;
+
+  /* 圆角 */
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
+
+  /* 阴影：低饱和藏青着色、分层柔和 */
+  --shadow-s: 0 1px 2px rgba(20, 31, 75, 0.05), 0 2px 8px rgba(20, 31, 75, 0.05);
+  --shadow-m: 0 2px 6px rgba(20, 31, 75, 0.06), 0 18px 44px -14px rgba(20, 31, 75, 0.2);
+  --shadow-lift: 0 2px 8px rgba(20, 31, 75, 0.07), 0 28px 64px -18px rgba(20, 31, 75, 0.28);
+
+  /* 焦点环 */
+  --focus-ring: 0 0 0 3px rgba(15, 138, 150, 0.28);
+
+  /* 间距（4px 基准） */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* 布局尺寸 */
+  --header-height: 68px;
+  --content-max: 1160px;
+  --measure: 72ch;
+
+  /* 层级 */
+  --z-header: 20;
+  --z-dialog: 40;
+  --z-toast: 60;
+
+  /* 动效 */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

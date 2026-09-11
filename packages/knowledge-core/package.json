@@ -1,0 +1,35 @@
+{
+  "name": "@bmc3/knowledge-core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "remark-gfm": "1.0.0",
+    "remark-math": "4.0.0",
+    "remark-parse": "9.0.0",
+    "remark-stringify": "9.0.1",
+    "unified": "9.2.2",
+    "yauzl": "3.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "@types/yauzl": "^3.4.0",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.8.3"
+  }
+}

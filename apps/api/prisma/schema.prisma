@@ -1,0 +1,2213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  EDITOR
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Visibility {
+  PUBLIC
+  MEMBERS
+}
+
+enum KnowledgeKind {
+  ARTICLE
+  PDF
+  DOCX
+  MARKDOWN
+}
+
+enum KnowledgeLibraryScope {
+  SHARED
+  PRIVATE
+}
+
+enum KnowledgeImportFileType {
+  MARKDOWN
+  ZIP
+}
+
+enum KnowledgeImportStatus {
+  PREFLIGHT_PENDING
+  PREFLIGHTING
+  INVALID
+  AWAITING_CONFIRMATION
+  INDEX_PENDING
+  PROCESSING
+  READY
+  FAILED
+  COMPENSATION_FAILED
+  EXPIRED
+}
+
+enum KnowledgeImportIssueSeverity {
+  ERROR
+  WARNING
+}
+
+enum KnowledgeImportAssetStatus {
+  PLANNED
+  PROCESSED
+  UPLOADED
+  LINKED
+  CLEANED
+  ORPHANED
+}
+
+enum KnowledgeIndexOperation {
+  LEGACY_INDEX
+  INDEX_VERSION
+  DELETE_VERSION_VECTORS
+  DELETE_DOCUMENT_VECTORS
+  SYNC_VERSION_ACTIVITY
+}
+
+enum ImportSourceCleanupStatus {
+  RETAINED
+  PENDING
+  IN_PROGRESS
+  CLEANED
+  FAILED
+}
+
+enum KnowledgeVersionOrigin {
+  IMPORT
+  REINDEX
+}
+
+enum KnowledgeRenderStatus {
+  PENDING
+  READY
+  FAILED
+}
+
+enum KnowledgeConversationMode {
+  SHARED
+  PRIVATE
+  COMBINED
+}
+
+enum IndexStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum QuizQuestionCategory {
+  STANDARD
+  KNOWLEDGE_RECALL
+}
+
+enum QuizQuestionOrigin {
+  MANUAL
+  CSV
+  AI_GENERATED
+}
+
+enum QuizQuestionReviewStatus {
+  DRAFT_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum AiTaskType {
+  CHAT_QA
+  QUESTION_GENERATION
+  SHORT_ANSWER_GRADING
+  DAILY_PLAN
+  CREDIT_HOUR_REVIEW
+}
+
+enum AiTaskStrategy {
+  FLASH_NO_THINKING
+  FLASH_HIGH
+  PRO_HIGH
+  PRO_MAX
+  VISION_HIGH
+}
+
+enum CreditHourType {
+  QUALITY
+  VOLUNTEER
+}
+
+enum CreditHourSubmissionStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  WITHDRAWN
+  PENDING_MANUAL_REVIEW
+}
+
+enum CreditHourReviewJobStatus {
+  PENDING
+  RUNNING
+  RETRY_PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  STALE
+}
+
+enum CreditHourDecisionSource {
+  AI
+  ADMIN_OVERRIDE
+  ADMIN_CREATED
+}
+
+enum CreditHourProviderFileDeleteStatus {
+  PENDING
+  DELETED
+  FAILED
+  EXPIRED
+}
+
+enum CreditHourCleanupStatus {
+  PENDING
+  RUNNING
+  PARTIAL
+  COMPLETE
+  FAILED
+}
+
+enum AiInvocationStatus {
+  RESERVED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+enum AiUsageSource {
+  PROVIDER
+  ESTIMATED
+}
+
+enum AiQuestionGenerationComplexity {
+  SIMPLE
+  ASSOCIATIVE
+  COMPLEX
+  MAX
+}
+
+enum AiQuestionGenerationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  INVALID
+  FAILED
+  CANCELLED
+}
+
+enum QuizQuestionSourceReviewStatus {
+  NOT_APPLICABLE
+  VALID
+  REVIEW_REQUIRED
+}
+
+enum QuizQuestionReviewAction {
+  SAVE_DRAFT
+  APPROVE
+  REJECT
+  SOURCE_REVALIDATE
+  REOPEN
+}
+
+enum QuizImportFileType {
+  CSV
+  ZIP
+}
+
+enum QuizImportMode {
+  BANK
+  NEW_PAPER
+  APPEND_PAPER
+}
+
+enum QuizImportStatus {
+  PREFLIGHT_PENDING
+  PREFLIGHTING
+  AWAITING_CONFIRMATION
+  INVALID
+  IMPORT_PENDING
+  IMPORTING
+  COMPLETED
+  FAILED
+  COMPENSATION_FAILED
+  EXPIRED
+}
+
+enum QuizImportIssueSeverity {
+  ERROR
+  WARNING
+}
+
+enum QuizImportAssetStatus {
+  PLANNED
+  UPLOADED
+  LINKED
+  CLEANED
+  ORPHANED
+}
+
+enum QuizAttemptStatus {
+  DRAFT
+  SCORING
+  SUBMITTED
+  SCORING_FAILED
+  ABANDONED
+}
+
+enum TeachingProgressChangeType {
+  INITIAL
+  ADD
+  CORRECTION
+}
+
+enum UserPracticeInitializationStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum DailyPracticeCycleStatus {
+  BUILDING
+  GENERATING
+  READY
+  PAUSED
+  DEGRADED
+  FAILED
+}
+
+enum DailyPracticeDayStatus {
+  PENDING
+  PROCESSING
+  READY
+  LIMITED_CONTENT
+  NO_CONTENT
+  DEGRADED_READY
+  FAILED
+  PAUSED
+  STARTED
+  COMPLETED
+  STALE
+}
+
+enum DailyPracticePlanTrigger {
+  AUTO
+  ADMIN_REGENERATE
+  ADMIN_PREVIEW
+}
+
+enum DailyPracticeGenerationSource {
+  PRO_MAX
+  PRO_HIGH
+  FLASH_HIGH
+  DETERMINISTIC
+  NO_MODEL
+}
+
+enum DailyPracticePlanItemSource {
+  PERSONALIZED
+  ADMIN_FIXED
+}
+
+enum DailyPracticeSuggestionStatus {
+  PENDING
+  APPLIED
+  PARTIALLY_APPLIED
+  NOT_APPLIED
+  SUPERSEDED
+  EXPIRED_SERVICE_PAUSED
+}
+
+enum DailyPracticeStrategyAttemptStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id                           String                         @id @default(cuid())
+  displayName                  String                         @db.VarChar(80)
+  studentNumberHash            String                         @unique @db.Char(64)
+  studentNumberEncrypted       String                         @db.Text
+  passwordHash                 String                         @db.VarChar(255)
+  role                         Role                           @default(MEMBER)
+  status                       AccountStatus                  @default(PENDING)
+  createdAt                    DateTime                       @default(now())
+  updatedAt                    DateTime                       @updatedAt
+  approvedAt                   DateTime?
+  sessions                     Session[]
+  news                         News[]
+  albums                       Album[]
+  threads                      ForumThread[]
+  forumPosts                   ForumPost[]
+  reports                      ForumReport[]
+  knowledgeDocuments           KnowledgeDocument[]
+  knowledgeLibrariesOwned      KnowledgeLibrary[]             @relation("KnowledgeLibraryOwner")
+  knowledgeImportsCreated      KnowledgeImportJob[]           @relation("KnowledgeImportCreator")
+  knowledgeImportsConfirmed    KnowledgeImportJob[]           @relation("KnowledgeImportConfirmer")
+  quizQuestions                QuizQuestion[]
+  quizPapers                   QuizPaper[]
+  quizAttempts                 QuizAttempt[]
+  quizWrongQuestions           QuizWrongQuestion[]
+  quizImports                  QuizImportJob[]
+  auditLogs                    AuditLog[]                     @relation("AuditActor")
+  aiConversations              AiConversation[]
+  aiInvocationsRequested       AiInvocation[]                 @relation("AiInvocationRequester")
+  aiQuestionGenerationJobs     AiQuestionGenerationJob[]      @relation("AiQuestionGenerationCreator")
+  quizQuestionReviewEvents     QuizQuestionReviewEvent[]      @relation("QuizQuestionReviewer")
+  uploadedPhotos               Photo[]                        @relation("PhotoUploader")
+  subjectsCreated              Subject[]                      @relation("SubjectCreator")
+  dailyPracticeSettingsUpdates DailyPracticeSettings[]        @relation("DailyPracticeSettingsUpdater")
+  dailyPracticePausesCreated   DailyPracticeServicePause[]    @relation("DailyPracticePauseCreator")
+  dailyPracticePausesCancelled DailyPracticeServicePause[]    @relation("DailyPracticePauseCanceller")
+  teachingProgressPublished    TeachingProgress[]             @relation("TeachingProgressPublisher")
+  fixedAssignmentsPublished    DailyPracticeFixedAssignment[] @relation("DailyPracticeFixedAssignmentPublisher")
+  practiceProfile              UserPracticeProfile?
+  knowledgeStates              UserKnowledgeState[]
+  chapterStates                UserChapterState[]
+  dailyPracticeDays            DailyPracticeDay[]
+  dailyPlanRevisionsCreated    DailyPracticePlanRevision[]    @relation("DailyPracticePlanRevisionCreator")
+  dailySuggestionsReceived     DailyPracticeSuggestion[]      @relation("DailyPracticeSuggestionTarget")
+  dailySuggestionsSubmitted    DailyPracticeSuggestion[]      @relation("DailyPracticeSuggestionSubmitter")
+  creditHourSubmissions        CreditHourSubmission[]          @relation("CreditHourSubmitter")
+  creditHourDecisionEvents     CreditHourDecisionEvent[]       @relation("CreditHourDecisionActor")
+  creditHourCleanupOperations  CreditHourCleanupOperation[]    @relation("CreditHourCleanupActor")
+  creditHourUploadOperations   CreditHourUploadOperation[]     @relation("CreditHourUploadActor")
+  creditHourSubmissionBatches  CreditHourSubmissionBatch[]     @relation("CreditHourBatchActor")
+  announcementsCreated        Announcement[]                  @relation("AnnouncementCreator")
+  announcementsPublished      Announcement[]                  @relation("AnnouncementPublisher")
+  announcementReads           AnnouncementRead[]
+
+  @@index([status, role])
+}
+
+model CreditHourSubmission {
+  id                 String                     @id @default(cuid())
+  userId             String
+  user               User                       @relation("CreditHourSubmitter", fields: [userId], references: [id], onDelete: Restrict)
+  type               CreditHourType
+  status             CreditHourSubmissionStatus @default(PENDING_REVIEW)
+  revision           Int                        @default(1)
+  currentReviewCycle Int                        @default(1)
+  idempotencyKey     String                     @db.VarChar(191)
+  requestHash        String                     @db.Char(64)
+  replacesSubmissionId String?
+  replacesSubmission CreditHourSubmission?      @relation("CreditHourReplacement", fields: [replacesSubmissionId], references: [id], onDelete: SetNull)
+  replacementSubmissions CreditHourSubmission[]  @relation("CreditHourReplacement")
+  generation         Int                        @default(1)
+  decisionSource     CreditHourDecisionSource?
+  decisionReason     String?                    @db.VarChar(500)
+  decidedAt          DateTime?
+  revisions          CreditHourSubmissionRevision[]
+  reviewJobs         CreditHourReviewJob[]
+  decisionEvents     CreditHourDecisionEvent[]
+  cleanupOperations  CreditHourCleanupOperation[]
+  batchId            String?
+  batch              CreditHourSubmissionBatch? @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  deletedAt          DateTime?
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, type, deletedAt, createdAt, id])
+  @@index([userId, type, status, deletedAt, decidedAt, id])
+  @@index([type, status, deletedAt, createdAt, id])
+  @@index([decidedAt, id])
+  @@index([replacesSubmissionId])
+}
+
+model CreditHourSubmissionRevision {
+  id                String                 @id @default(cuid())
+  submissionId      String
+  submission        CreditHourSubmission   @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  revision          Int                    @default(1)
+  activityName      String                 @db.VarChar(160)
+  halfHours         Int
+  sourceDescription String                 @db.Text
+  requestHash       String                 @db.Char(64)
+  evidence          CreditHourEvidence[]
+  createdAt         DateTime               @default(now())
+
+  @@unique([submissionId, revision])
+  @@index([halfHours])
+}
+
+model CreditHourEvidence {
+  id                String                       @id @default(cuid())
+  revisionId        String
+  revision          CreditHourSubmissionRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  sortOrder         Int
+  originalObjectKey String?                      @unique @db.VarChar(500)
+  originalData      Bytes?                       @db.LongBlob
+  originalMimeType  String                       @db.VarChar(100)
+  originalSize      Int
+  originalWidth     Int
+  originalHeight    Int
+  originalSha256    String                       @db.Char(64)
+  displayObjectKey  String?                      @unique @db.VarChar(500)
+  displayData       Bytes?                       @db.LongBlob
+  displayMimeType   String                       @default("image/webp") @db.VarChar(100)
+  displaySize       Int
+  displayWidth      Int
+  displayHeight     Int
+  providerFiles     CreditHourProviderFile[]
+  createdAt         DateTime                     @default(now())
+
+  @@unique([revisionId, sortOrder])
+  @@index([originalSha256])
+}
+
+model CreditHourReviewJob {
+  id                String                    @id @default(cuid())
+  submissionId      String
+  submission        CreditHourSubmission      @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewCycle       Int
+  contentRevision   Int
+  generation        Int
+  status            CreditHourReviewJobStatus @default(PENDING)
+  attempts          Int                       @default(0)
+  nextAttemptAt     DateTime?
+  leaseOwnerToken   String?                   @db.VarChar(191)
+  leasedUntil       DateTime?
+  errorCategory     String?                   @db.VarChar(80)
+  errorMessage      String?                   @db.VarChar(500)
+  completedAt       DateTime?
+  reviewAttempts    CreditHourReviewAttempt[]
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  @@unique([submissionId, reviewCycle])
+  @@index([status, nextAttemptAt, createdAt])
+  @@index([leaseOwnerToken, leasedUntil])
+}
+
+model CreditHourReviewAttempt {
+  id                String                    @id @default(cuid())
+  jobId             String
+  job               CreditHourReviewJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  attempt           Int
+  aiInvocationId    String?                   @db.VarChar(191)
+  model             String                    @db.VarChar(100)
+  strategy          AiTaskStrategy            @default(VISION_HIGH)
+  promptVersion     String                    @db.VarChar(80)
+  decision          String?                   @db.VarChar(20)
+  userReason        String?                   @db.VarChar(500)
+  fieldSummary      Json?
+  riskCodes         Json?
+  inputHash         String                    @db.Char(64)
+  outputHash        String?                   @db.Char(64)
+  errorCategory     String?                   @db.VarChar(80)
+  errorMessage      String?                   @db.VarChar(500)
+  providerFiles     CreditHourProviderFile[]
+  completedAt       DateTime?
+  createdAt         DateTime                  @default(now())
+
+  @@unique([jobId, attempt])
+  @@index([aiInvocationId])
+}
+
+model CreditHourProviderFile {
+  id                String                             @id @default(cuid())
+  attemptId         String
+  attempt           CreditHourReviewAttempt            @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  evidenceId        String
+  evidence          CreditHourEvidence                 @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  providerFileId    String                             @db.VarChar(191)
+  expiresAt         DateTime
+  deleteStatus      CreditHourProviderFileDeleteStatus @default(PENDING)
+  deleteAttempts    Int                                @default(0)
+  deleteError       String?                            @db.VarChar(500)
+  deletedAt         DateTime?
+  createdAt         DateTime                           @default(now())
+  updatedAt         DateTime                           @updatedAt
+
+  @@unique([attemptId, evidenceId])
+  @@index([deleteStatus, expiresAt])
+}
+
+model CreditHourDecisionEvent {
+  id              String                     @id @default(cuid())
+  submissionId    String
+  submission      CreditHourSubmission       @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewCycle     Int
+  contentRevision Int
+  source          CreditHourDecisionSource?
+  actorId         String?
+  actor           User?                      @relation("CreditHourDecisionActor", fields: [actorId], references: [id], onDelete: SetNull)
+  fromStatus      CreditHourSubmissionStatus
+  toStatus        CreditHourSubmissionStatus
+  reason          String?                    @db.VarChar(500)
+  createdAt       DateTime                   @default(now())
+
+  @@index([submissionId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+enum CreditHourUploadStatus {
+  UPLOADING
+  COMMITTED
+  CLEANUP_PENDING
+  CLEANING
+  CLEANUP_FAILED
+  CLEANED
+}
+
+model CreditHourUploadOperation {
+  id              String                 @id @default(cuid())
+  userId          String
+  user            User                   @relation("CreditHourUploadActor", fields: [userId], references: [id], onDelete: Restrict)
+  idempotencyKey  String                 @db.VarChar(191)
+  requestHash     String                 @db.Char(64)
+  manifest        Json
+  status          CreditHourUploadStatus @default(UPLOADING)
+  leaseOwnerToken String?                @db.VarChar(191)
+  leasedUntil     DateTime?
+  nextAttemptAt   DateTime?
+  attempts        Int                    @default(0)
+  errorMessage    String?                @db.VarChar(500)
+  completedAt     DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@index([userId, idempotencyKey])
+  @@index([status, nextAttemptAt, leasedUntil])
+}
+
+model CreditHourSubmissionBatch {
+  id             String                 @id @default(cuid())
+  actorId        String
+  actor          User                   @relation("CreditHourBatchActor", fields: [actorId], references: [id], onDelete: Restrict)
+  idempotencyKey String                 @db.VarChar(191)
+  requestHash    String                 @db.Char(64)
+  submissions    CreditHourSubmission[]
+  createdAt      DateTime               @default(now())
+
+  @@unique([actorId, idempotencyKey])
+}
+
+model CreditHourCleanupOperation {
+  id             String                  @id @default(cuid())
+  submissionId   String
+  submission     CreditHourSubmission    @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  createdById    String
+  createdBy      User                    @relation("CreditHourCleanupActor", fields: [createdById], references: [id], onDelete: Restrict)
+  reason         String                  @db.VarChar(500)
+  status         CreditHourCleanupStatus @default(PENDING)
+  manifest       Json
+  totalObjects   Int                     @default(0)
+  deletedObjects Int                     @default(0)
+  errorMessage   String?                 @db.VarChar(500)
+  leaseOwnerToken String?                @db.VarChar(191)
+  leasedUntil    DateTime?
+  nextAttemptAt  DateTime?
+  attempts       Int                     @default(0)
+  completedAt    DateTime?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+
+  @@index([submissionId, createdAt])
+  @@index([status, createdAt])
+  @@index([status, nextAttemptAt, leasedUntil])
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+  WITHDRAWN
+}
+
+model Announcement {
+  id            String             @id @default(cuid())
+  title         String             @db.VarChar(160)
+  body          String             @db.MediumText
+  status        AnnouncementStatus @default(DRAFT)
+  revision      Int                @default(1)
+  createdById   String
+  createdBy     User               @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  publishedById String?
+  publishedBy   User?              @relation("AnnouncementPublisher", fields: [publishedById], references: [id], onDelete: Restrict)
+  publishedAt   DateTime?
+  withdrawnAt   DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  reads         AnnouncementRead[]
+
+  @@index([status, publishedAt, id])
+  @@index([createdAt, id])
+}
+
+model AnnouncementRead {
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  readAt         DateTime     @default(now())
+
+  @@id([userId, announcementId])
+  @@index([announcementId])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique @db.Char(64)
+  csrfToken  String   @db.VarChar(96)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt, id], map: "Session_expires_id_idx")
+}
+
+model Invite {
+  id        String   @id @default(cuid())
+  codeHash  String   @unique @db.Char(64)
+  label     String   @db.VarChar(120)
+  active    Boolean  @default(true)
+  maxUses   Int      @default(1)
+  usedCount Int      @default(0)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([active, expiresAt, createdAt], map: "Invite_active_expires_created_idx")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  action     String   @db.VarChar(100)
+  targetType String   @db.VarChar(80)
+  targetId   String?  @db.VarChar(64)
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+  @@index([createdAt, id], map: "AuditLog_created_id_idx")
+  @@index([actorId, createdAt, id], map: "AuditLog_actor_created_id_idx")
+  @@index([action, createdAt, id], map: "AuditLog_action_created_id_idx")
+  @@index([targetType, targetId, createdAt, id], map: "AuditLog_target_created_id_idx")
+}
+
+model News {
+  id          String        @id @default(cuid())
+  title       String        @db.VarChar(160)
+  summary     String        @db.VarChar(300)
+  body        String        @db.LongText
+  bodyFormat  String        @default("HTML_V1") @db.VarChar(20)
+  status      ContentStatus @default(DRAFT)
+  visibility  Visibility    @default(MEMBERS)
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id])
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  photos      NewsPhoto[]
+
+  @@index([status, visibility, publishedAt])
+}
+
+model Album {
+  id          String    @id @default(cuid())
+  title       String    @db.VarChar(160)
+  description String    @db.Text
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  photos      Photo[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  archivedAt  DateTime?
+  deletedAt   DateTime?
+
+  @@index([archivedAt, createdAt, id], map: "Album_archived_created_id_idx")
+}
+
+model Photo {
+  id                    String                  @id @default(cuid())
+  albumId               String?
+  album                 Album?                  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  uploadedById          String?
+  uploadedBy            User?                   @relation("PhotoUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
+  objectKey             String?                 @unique @db.VarChar(500)
+  data                  Bytes?                  @db.LongBlob
+  caption               String                  @default("") @db.VarChar(300)
+  mimeType              String                  @db.VarChar(100)
+  size                  Int
+  width                 Int?
+  height                Int?
+  sortOrder             Int                     @default(0)
+  createdAt             DateTime                @default(now())
+  news                  NewsPhoto[]
+  quizQuestions         QuizQuestionPhoto[]
+  knowledgeImages       KnowledgeVersionImage[]
+  knowledgeImportAssets KnowledgeImportAsset[]
+  original              PhotoOriginal?
+
+  @@index([albumId, sortOrder])
+  @@index([albumId, sortOrder, createdAt, id], map: "Photo_album_sort_created_id_idx")
+  @@index([uploadedById, createdAt])
+}
+
+model PhotoOriginal {
+  photoId   String   @id
+  photo     Photo    @relation(fields: [photoId], references: [id], onDelete: Restrict)
+  objectKey String?  @unique @db.VarChar(500)
+  data      Bytes?   @db.LongBlob
+  mimeType  String   @db.VarChar(100)
+  size      Int
+  width     Int
+  height    Int
+  sha256    String   @db.Char(64)
+  createdAt DateTime @default(now())
+}
+
+model MediaObjectOperation {
+  id              String   @id @default(cuid())
+  kind            String   @db.VarChar(20)
+  status          String   @default("UPLOADING") @db.VarChar(30)
+  actorId         String?
+  albumId         String?
+  photoId         String?
+  idempotencyKey  String?  @db.VarChar(191)
+  requestHash     String?  @db.Char(64)
+  manifest        Json
+  leaseOwnerToken String?  @db.VarChar(191)
+  leasedUntil     DateTime?
+  nextAttemptAt   DateTime?
+  completedAt     DateTime?
+  attempts        Int      @default(0)
+  errorMessage    String?  @db.VarChar(500)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([actorId, albumId, idempotencyKey])
+  @@index([status, nextAttemptAt, leasedUntil])
+  @@index([photoId])
+}
+
+model NewsPhoto {
+  newsId    String
+  news      News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  photoId   String
+  photo     Photo    @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([newsId, photoId])
+  @@index([photoId])
+}
+
+model ForumThread {
+  id        String        @id @default(cuid())
+  title     String        @db.VarChar(160)
+  body      String        @db.LongText
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id])
+  pinned    Boolean       @default(false)
+  locked    Boolean       @default(false)
+  hidden    Boolean       @default(false)
+  posts     ForumPost[]
+  reports   ForumReport[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+
+  @@index([pinned, updatedAt])
+}
+
+model ForumPost {
+  id        String        @id @default(cuid())
+  threadId  String
+  thread    ForumThread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  body      String        @db.LongText
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id])
+  reports   ForumReport[]
+  hidden    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+
+  @@index([threadId, createdAt])
+}
+
+model ForumReport {
+  id         String       @id @default(cuid())
+  reason     String       @db.VarChar(500)
+  reporterId String
+  reporter   User         @relation(fields: [reporterId], references: [id])
+  threadId   String?
+  thread     ForumThread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  postId     String?
+  post       ForumPost?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  resolvedAt DateTime?
+  createdAt  DateTime     @default(now())
+
+  @@index([resolvedAt, createdAt])
+}
+
+model KnowledgeDocument {
+  id                    String                     @id @default(cuid())
+  title                 String                     @db.VarChar(200)
+  kind                  KnowledgeKind
+  body                  String?                    @db.LongText
+  objectKey             String?                    @db.VarChar(500)
+  sourceName            String?                    @db.VarChar(255)
+  mimeType              String?                    @db.VarChar(120)
+  fileSize              Int                        @default(0)
+  subjectId             String
+  subject               Subject                    @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  libraryId             String
+  library               KnowledgeLibrary           @relation(fields: [libraryId], references: [id], onDelete: Restrict)
+  status                ContentStatus              @default(DRAFT)
+  indexStatus           IndexStatus                @default(PENDING)
+  activeVersionId       String?                    @unique
+  activeVersion         KnowledgeDocumentVersion?  @relation("ActiveDocumentVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
+  nextVersion           Int                        @default(1)
+  authorId              String
+  author                User                       @relation(fields: [authorId], references: [id])
+  chunks                KnowledgeChunk[]
+  jobs                  IndexJob[]
+  versions              KnowledgeDocumentVersion[] @relation("DocumentVersions")
+  importJobs            KnowledgeImportJob[]
+  teachingProgressNodes TeachingProgressNode[]
+  userKnowledgeStates   UserKnowledgeState[]
+  createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
+  publishedAt           DateTime?
+  deletedAt             DateTime?
+
+  @@index([status, indexStatus])
+  @@index([subjectId, status, indexStatus])
+  @@index([libraryId, status, deletedAt])
+  @@index([libraryId, activeVersionId])
+}
+
+model Subject {
+  id                       String                    @id @default(cuid())
+  name                     String                    @unique @db.VarChar(100)
+  slug                     String                    @unique @db.VarChar(100)
+  sortOrder                Int                       @default(0)
+  active                   Boolean                   @default(true)
+  createdById              String?
+  createdBy                User?                     @relation("SubjectCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  documents                KnowledgeDocument[]
+  knowledgeLibraries       KnowledgeLibrary[]
+  aiConversations          AiConversation[]
+  chapters                 SubjectChapter[]
+  quizQuestions            QuizQuestion[]
+  quizPapers               QuizPaper[]
+  aiQuestionGenerationJobs AiQuestionGenerationJob[]
+  teachingProgresses       TeachingProgress[]
+  userKnowledgeStates      UserKnowledgeState[]
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+
+  @@index([active, sortOrder])
+  @@map("KnowledgeSubject")
+}
+
+model SubjectChapter {
+  id                String                        @id @default(cuid())
+  subjectId         String
+  subject           Subject                       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  name              String                        @db.VarChar(100)
+  slug              String                        @db.VarChar(100)
+  sortOrder         Int                           @default(0)
+  active            Boolean                       @default(true)
+  questions         QuizQuestionChapter[]
+  generationJobs    AiQuestionGenerationChapter[]
+  userChapterStates UserChapterState[]
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+
+  @@unique([subjectId, name])
+  @@unique([subjectId, slug])
+  @@index([subjectId, active, sortOrder])
+}
+
+model KnowledgeChunk {
+  id                   String                    @id @default(cuid())
+  documentId           String
+  document             KnowledgeDocument         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunkIndex           Int
+  versionNumber        Int                       @default(0)
+  documentVersionId    String?
+  documentVersion      KnowledgeDocumentVersion? @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  nodeId               String?
+  node                 KnowledgeNode?            @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  primaryRenderBlockId String?
+  primaryRenderBlock   KnowledgeRenderBlock?     @relation("KnowledgeChunkPrimaryRenderBlock", fields: [primaryRenderBlockId], references: [id], onDelete: SetNull)
+  content              String                    @db.Text
+  pageNumber           Int?
+  vectorRef            String?                   @db.VarChar(255)
+  tokenCount           Int?
+  contentHash          String?                   @db.Char(64)
+  embeddingStatus      IndexStatus               @default(PENDING)
+  embeddedAt           DateTime?
+  imageReferences      KnowledgeImageReference[]
+  createdAt            DateTime                  @default(now())
+
+  @@unique([documentId, versionNumber, chunkIndex])
+  @@index([documentVersionId, chunkIndex])
+  @@index([nodeId, chunkIndex])
+  @@index([primaryRenderBlockId])
+  @@fulltext([content])
+}
+
+model IndexJob {
+  id                String                    @id @default(cuid())
+  documentId        String
+  document          KnowledgeDocument         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  status            IndexStatus               @default(PENDING)
+  operation         KnowledgeIndexOperation   @default(LEGACY_INDEX)
+  documentVersionId String?
+  documentVersion   KnowledgeDocumentVersion? @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  idempotencyKey    String?                   @unique @db.VarChar(191)
+  stage             String                    @default("QUEUED") @db.VarChar(80)
+  progressCurrent   Int                       @default(0)
+  progressTotal     Int                       @default(0)
+  attempts          Int                       @default(0)
+  error             String?                   @db.Text
+  leaseOwnerToken   String?                   @db.VarChar(191)
+  leasedUntil       DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([documentId, status])
+  @@index([leaseOwnerToken, leasedUntil])
+}
+
+model KnowledgeLibrary {
+  id                    String                    @id @default(cuid())
+  name                  String                    @db.VarChar(160)
+  scope                 KnowledgeLibraryScope
+  ownerId               String?
+  owner                 User?                     @relation("KnowledgeLibraryOwner", fields: [ownerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  subjectId             String
+  subject               Subject                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  aiEnabled             Boolean                   @default(false)
+  aiEnabledAt           DateTime?
+  active                Boolean                   @default(true)
+  adminDisabledAt       DateTime?
+  documents             KnowledgeDocument[]
+  chapters              KnowledgeLibraryChapter[]
+  importJobs            KnowledgeImportJob[]
+  conversations         AiConversationLibrary[]
+  teachingProgressNodes TeachingProgressNode[]
+  userKnowledgeStates   UserKnowledgeState[]
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+  deletedAt             DateTime?
+
+  @@unique([ownerId, name])
+  @@index([scope, subjectId, active, deletedAt])
+  @@index([ownerId, active, deletedAt])
+}
+
+model KnowledgeLibraryChapter {
+  id                   String                         @id @default(cuid())
+  libraryId            String
+  library              KnowledgeLibrary               @relation(fields: [libraryId], references: [id], onDelete: Cascade)
+  name                 String                         @db.VarChar(100)
+  normalizedName       String                         @db.VarChar(100)
+  slug                 String                         @db.VarChar(100)
+  sortOrder            Int                            @default(0)
+  active               Boolean                        @default(true)
+  nodes                KnowledgeNode[]
+  conversationChapters AiConversationLibraryChapter[]
+  createdAt            DateTime                       @default(now())
+  updatedAt            DateTime                       @updatedAt
+
+  @@unique([libraryId, normalizedName])
+  @@unique([libraryId, slug])
+  @@index([libraryId, active, sortOrder])
+}
+
+model KnowledgeImportJob {
+  id                         String                    @id @default(cuid())
+  createdById                String
+  createdBy                  User                      @relation("KnowledgeImportCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  confirmedById              String?
+  confirmedBy                User?                     @relation("KnowledgeImportConfirmer", fields: [confirmedById], references: [id], onDelete: SetNull)
+  libraryId                  String
+  library                    KnowledgeLibrary          @relation(fields: [libraryId], references: [id], onDelete: Restrict)
+  targetDocumentId           String?
+  targetDocument             KnowledgeDocument?        @relation(fields: [targetDocumentId], references: [id], onDelete: Restrict)
+  fileType                   KnowledgeImportFileType
+  sourceObjectKey            String                    @unique @db.VarChar(500)
+  sourceName                 String                    @db.VarChar(255)
+  sourceSize                 Int
+  sourceSha256               String                    @db.Char(64)
+  status                     KnowledgeImportStatus     @default(PREFLIGHT_PENDING)
+  stage                      String                    @default("QUEUED") @db.VarChar(80)
+  progressCurrent            Int                       @default(0)
+  progressTotal              Int                       @default(0)
+  title                      String?                   @db.VarChar(200)
+  nodeCount                  Int                       @default(0)
+  estimatedChunkCount        Int                       @default(0)
+  imageCount                 Int                       @default(0)
+  processedImageBytes        BigInt                    @default(0)
+  warningCount               Int                       @default(0)
+  errorCount                 Int                       @default(0)
+  summary                    Json?
+  reservedChunks             Int                       @default(0)
+  reservedPoints             Int                       @default(0)
+  reservedImages             Int                       @default(0)
+  reservedMediaBytes         BigInt                    @default(0)
+  attempts                   Int                       @default(0)
+  leaseOwnerToken            String?                   @db.VarChar(191)
+  leasedUntil                DateTime?
+  sourceCleanupStatus        ImportSourceCleanupStatus @default(RETAINED)
+  sourceCleanupAttempts      Int                       @default(0)
+  sourceCleanupNextAttemptAt DateTime?
+  sourceCleanupError         String?                   @db.Text
+  sourceCleanedAt            DateTime?
+  errorCode                  String?                   @db.VarChar(80)
+  errorMessage               String?                   @db.Text
+  cancelRequestedAt          DateTime?
+  expiresAt                  DateTime
+  confirmedAt                DateTime?
+  completedAt                DateTime?
+  confirmedVersionId         String?                   @unique
+  confirmedVersion           KnowledgeDocumentVersion? @relation(fields: [confirmedVersionId], references: [id], onDelete: SetNull)
+  issues                     KnowledgeImportIssue[]
+  assets                     KnowledgeImportAsset[]
+  createdAt                  DateTime                  @default(now())
+  updatedAt                  DateTime                  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdById, status])
+  @@index([libraryId, status])
+  @@index([targetDocumentId, status])
+  @@index([expiresAt, status])
+  @@index([leaseOwnerToken, leasedUntil])
+  @@index([sourceCleanupStatus, sourceCleanupNextAttemptAt], map: "KnowledgeImport_cleanup_due_idx")
+}
+
+model KnowledgeImportIssue {
+  id        Int                          @id @default(autoincrement())
+  importId  String
+  importJob KnowledgeImportJob           @relation(fields: [importId], references: [id], onDelete: Cascade)
+  severity  KnowledgeImportIssueSeverity
+  code      String                       @db.VarChar(80)
+  message   String                       @db.VarChar(500)
+  entryPath String?                      @db.VarChar(500)
+  nodePath  String?                      @db.VarChar(500)
+  line      Int?
+  column    Int?
+  createdAt DateTime                     @default(now())
+
+  @@index([importId, severity, id])
+}
+
+model KnowledgeImportAsset {
+  id            String                     @id @default(cuid())
+  importId      String
+  importJob     KnowledgeImportJob         @relation(fields: [importId], references: [id], onDelete: Cascade)
+  entryPath     String                     @db.VarChar(500)
+  contentHash   String                     @db.Char(64)
+  sourceSize    Int
+  mimeType      String?                    @db.VarChar(100)
+  width         Int?
+  height        Int?
+  processedSize Int?
+  objectKey     String?                    @unique @db.VarChar(500)
+  photoId       String?                    @unique
+  photo         Photo?                     @relation(fields: [photoId], references: [id], onDelete: SetNull)
+  versionImage  KnowledgeVersionImage?
+  status        KnowledgeImportAssetStatus @default(PLANNED)
+  cleanupError  String?                    @db.Text
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+
+  @@unique([importId, entryPath])
+  @@index([importId, status])
+}
+
+model KnowledgeCapacityCounter {
+  key                String   @id @db.VarChar(191)
+  activeLibraries    Int      @default(0)
+  activeDocuments    Int      @default(0)
+  activeChunks       Int      @default(0)
+  livePoints         Int      @default(0)
+  imageCount         Int      @default(0)
+  mediaBytes         BigInt   @default(0)
+  reservedChunks     Int      @default(0)
+  reservedPoints     Int      @default(0)
+  reservedImages     Int      @default(0)
+  reservedMediaBytes BigInt   @default(0)
+  updatedAt          DateTime @updatedAt
+}
+
+model KnowledgeDocumentVersion {
+  id                  String                  @id @default(cuid())
+  documentId          String
+  document            KnowledgeDocument       @relation("DocumentVersions", fields: [documentId], references: [id], onDelete: Cascade)
+  activeForDocument   KnowledgeDocument?      @relation("ActiveDocumentVersion")
+  version             Int
+  origin              KnowledgeVersionOrigin  @default(IMPORT)
+  title               String                  @db.VarChar(200)
+  titleMarkdown       String?                 @db.VarChar(4096)
+  markdown            String                  @db.LongText
+  contentHash         String                  @db.Char(64)
+  imageManifestHash   String                  @db.Char(64)
+  indexStatus         IndexStatus             @default(PENDING)
+  parserVersion       String                  @db.VarChar(40)
+  chunkerVersion      String                  @db.VarChar(40)
+  renderStatus        KnowledgeRenderStatus   @default(PENDING)
+  renderBlockVersion  String?                 @db.VarChar(40)
+  renderBlockCount    Int                     @default(0)
+  mathCount           Int                     @default(0)
+  renderError         String?                 @db.Text
+  embeddingModel      String                  @db.VarChar(80)
+  embeddingDimensions Int
+  nodeCount           Int                     @default(0)
+  chunkCount          Int                     @default(0)
+  vectorCount         Int                     @default(0)
+  imageCount          Int                     @default(0)
+  error               String?                 @db.Text
+  indexedAt           DateTime?
+  activatedAt         DateTime?
+  retiredAt           DateTime?
+  nodes               KnowledgeNode[]
+  chunks              KnowledgeChunk[]
+  renderBlocks        KnowledgeRenderBlock[]
+  images              KnowledgeVersionImage[]
+  indexJobs           IndexJob[]
+  importJob           KnowledgeImportJob?
+  createdAt           DateTime                @default(now())
+
+  @@unique([documentId, version])
+  @@index([documentId, indexStatus])
+}
+
+model KnowledgeNode {
+  id                    String                        @id @db.VarChar(191)
+  documentVersionId     String
+  documentVersion       KnowledgeDocumentVersion      @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  libraryChapterId      String
+  libraryChapter        KnowledgeLibraryChapter       @relation(fields: [libraryChapterId], references: [id], onDelete: Restrict)
+  parentId              String?
+  parent                KnowledgeNode?                @relation("KnowledgeNodeTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children              KnowledgeNode[]               @relation("KnowledgeNodeTree")
+  level                 Int
+  title                 String                        @db.VarChar(200)
+  titleMarkdown         String?                       @db.VarChar(4096)
+  path                  String                        @db.VarChar(1000)
+  pathHash              String                        @db.Char(64)
+  breadcrumb            String                        @db.VarChar(1000)
+  body                  String                        @db.LongText
+  sortOrder             Int
+  chunks                KnowledgeChunk[]
+  renderBlocks          KnowledgeRenderBlock[]
+  imageReferences       KnowledgeImageReference[]
+  generationSources     AiQuestionGenerationSource[]
+  questionSources       QuizQuestionKnowledgeSource[]
+  teachingProgressNodes TeachingProgressNode[]        @relation("TeachingProgressCurrentKnowledgeNode")
+  userKnowledgeStates   UserKnowledgeState[]          @relation("UserKnowledgeCurrentNode")
+
+  @@unique([documentVersionId, pathHash])
+  @@index([libraryChapterId, sortOrder])
+  @@index([parentId, sortOrder])
+}
+
+model KnowledgeRenderBlock {
+  id                String                    @id @db.VarChar(191)
+  documentVersionId String
+  documentVersion   KnowledgeDocumentVersion  @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  nodeId            String
+  node              KnowledgeNode             @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  blockIndex        Int
+  markdown          String                    @db.LongText
+  sourceHash        String                    @db.Char(64)
+  plainTextLength   Int
+  markdownBytes     Int
+  imageCount        Int
+  mathCount         Int
+  imageReferences   KnowledgeImageReference[]
+  primaryChunks     KnowledgeChunk[]          @relation("KnowledgeChunkPrimaryRenderBlock")
+  createdAt         DateTime                  @default(now())
+
+  @@unique([documentVersionId, nodeId, blockIndex])
+  @@index([documentVersionId, sourceHash, blockIndex])
+}
+
+model KnowledgeVersionImage {
+  id                String                    @id @db.VarChar(191)
+  documentVersionId String
+  documentVersion   KnowledgeDocumentVersion  @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  photoId           String
+  photo             Photo                     @relation(fields: [photoId], references: [id], onDelete: Restrict)
+  importAssetId     String?                   @unique
+  importAsset       KnowledgeImportAsset?     @relation(fields: [importAssetId], references: [id], onDelete: SetNull)
+  entryPath         String                    @db.VarChar(500)
+  contentHash       String                    @db.Char(64)
+  altText           String                    @db.VarChar(300)
+  sortOrder         Int
+  references        KnowledgeImageReference[]
+
+  @@unique([documentVersionId, entryPath])
+  @@index([photoId])
+  @@index([documentVersionId, sortOrder])
+}
+
+model KnowledgeImageReference {
+  id              String                @id @db.VarChar(191)
+  versionImageId  String
+  versionImage    KnowledgeVersionImage @relation(fields: [versionImageId], references: [id], onDelete: Cascade)
+  nodeId          String
+  node            KnowledgeNode         @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  chunkId         String?
+  chunk           KnowledgeChunk?       @relation(fields: [chunkId], references: [id], onDelete: SetNull)
+  renderBlockId   String?
+  renderBlock     KnowledgeRenderBlock? @relation(fields: [renderBlockId], references: [id], onDelete: SetNull)
+  occurrenceIndex Int
+  altText         String                @db.VarChar(300)
+  sourceLine      Int?
+  sourceColumn    Int?
+
+  @@unique([versionImageId, occurrenceIndex])
+  @@index([chunkId])
+  @@index([renderBlockId])
+  @@index([nodeId, occurrenceIndex])
+}
+
+model QuizQuestion {
+  id                     String                         @id @default(cuid())
+  type                   QuestionType
+  typeLabel              String                         @db.VarChar(100)
+  legacySubject          String?                        @map("subject") @db.VarChar(100)
+  legacyChapter          String?                        @map("chapter") @db.VarChar(100)
+  subjectId              String
+  subject                Subject                        @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapters               QuizQuestionChapter[]
+  category               QuizQuestionCategory           @default(STANDARD)
+  origin                 QuizQuestionOrigin             @default(MANUAL)
+  reviewStatus           QuizQuestionReviewStatus       @default(APPROVED)
+  reviewRevision         Int                            @default(1)
+  sourceRevision         Int                            @default(1)
+  sourceReviewStatus     QuizQuestionSourceReviewStatus @default(NOT_APPLICABLE)
+  sourceReviewRequiredAt DateTime?
+  prompt                 String                         @db.Text
+  options                Json
+  correctAnswer          Json
+  gradingRubric          Json?
+  maxScore               Int                            @default(1)
+  explanation            String                         @db.Text
+  enabled                Boolean                        @default(true)
+  authorId               String
+  author                 User                           @relation(fields: [authorId], references: [id])
+  pastPaperId            String?
+  pastPaper              QuizPaper?                     @relation(fields: [pastPaperId], references: [id], onDelete: SetNull)
+  paperOrder             Int?
+  importJobId            String?
+  importJob              QuizImportJob?                 @relation(fields: [importJobId], references: [id], onDelete: SetNull)
+  importRowNumber        Int?
+  photos                 QuizQuestionPhoto[]
+  generationItem         AiQuestionGenerationItem?
+  knowledgeSources       QuizQuestionKnowledgeSource[]
+  reviewEvents           QuizQuestionReviewEvent[]
+  dailyFixedQuestions    DailyPracticeFixedQuestion[]
+  dailyPlanItems         DailyPracticePlanItem[]
+  lastKnowledgeStates    UserKnowledgeState[]           @relation("UserKnowledgeLastQuestion")
+  lastChapterStates      UserChapterState[]             @relation("UserChapterLastQuestion")
+  createdAt              DateTime                       @default(now())
+  updatedAt              DateTime                       @updatedAt
+
+  @@unique([pastPaperId, paperOrder])
+  @@unique([importJobId, importRowNumber])
+  @@index([subjectId, category, origin, enabled])
+  @@index([enabled, subjectId, typeLabel])
+  @@index([reviewStatus, origin, createdAt])
+  @@index([sourceReviewStatus, reviewStatus, enabled])
+}
+
+model AiInvocation {
+  id                   String                        @id @default(cuid())
+  taskType             AiTaskType
+  strategy             AiTaskStrategy
+  provider             String                        @db.VarChar(40)
+  model                String                        @db.VarChar(100)
+  promptVersion        String                        @db.VarChar(80)
+  correlationType      String                        @db.VarChar(80)
+  correlationId        String                        @db.VarChar(191)
+  requestedById        String?
+  requestedBy          User?                         @relation("AiInvocationRequester", fields: [requestedById], references: [id], onDelete: SetNull)
+  usageDate            DateTime?                     @db.Date
+  usageScope           String?                       @db.VarChar(100)
+  idempotencyKey       String?                       @unique @db.VarChar(191)
+  status               AiInvocationStatus            @default(RESERVED)
+  attempt              Int                           @default(1)
+  inputHash            String                        @db.Char(64)
+  outputHash           String?                       @db.Char(64)
+  inputTokens          Int                           @default(0)
+  outputTokens         Int                           @default(0)
+  reservedTokens       Int                           @default(0)
+  usageSource          AiUsageSource                 @default(ESTIMATED)
+  pricingVersion       String                        @default("unpriced-v1") @db.VarChar(80)
+  estimatedCostMicros  BigInt                        @default(0)
+  latencyMs            Int?
+  providerRequestId    String?                       @db.VarChar(191)
+  leasedUntil          DateTime?
+  errorCategory        String?                       @db.VarChar(80)
+  errorMessage         String?                       @db.VarChar(500)
+  startedAt            DateTime?
+  completedAt          DateTime?
+  dailyStrategyAttempt DailyPracticeStrategyAttempt?
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+
+  @@index([status, leasedUntil])
+  @@index([taskType, createdAt])
+  @@index([correlationType, correlationId])
+  @@index([requestedById, createdAt])
+  @@index([usageDate, usageScope, taskType])
+}
+
+model AiDailyUsage {
+  usageDate           DateTime   @db.Date
+  scope               String     @db.VarChar(100)
+  taskType            AiTaskType
+  calls               Int        @default(0)
+  activeCalls         Int        @default(0)
+  reservedTokens      BigInt     @default(0)
+  inputTokens         BigInt     @default(0)
+  outputTokens        BigInt     @default(0)
+  estimatedCostMicros BigInt     @default(0)
+  failures            Int        @default(0)
+  updatedAt           DateTime   @updatedAt
+
+  @@id([usageDate, scope, taskType])
+  @@index([taskType, usageDate])
+}
+
+model AiQuestionGenerationJob {
+  id                String                         @id @default(cuid())
+  createdById       String
+  createdBy         User                           @relation("AiQuestionGenerationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  subjectId         String
+  subject           Subject                        @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  gradingType       QuestionType
+  typeLabel         String                         @db.VarChar(100)
+  complexity        AiQuestionGenerationComplexity
+  requestedCount    Int
+  status            AiQuestionGenerationStatus     @default(PENDING)
+  stage             String                         @default("QUEUED") @db.VarChar(80)
+  idempotencyKey    String                         @db.VarChar(191)
+  requestHash       String?                        @db.Char(64)
+  promptVersion     String                         @db.VarChar(80)
+  configSnapshot    Json
+  validatedPayload  Json?
+  payloadHash       String?                        @db.Char(64)
+  attempts          Int                            @default(0)
+  nextAttemptAt     DateTime?
+  leaseOwnerToken   String?                        @db.VarChar(191)
+  leasedUntil       DateTime?
+  cancelRequestedAt DateTime?
+  errorCategory     String?                        @db.VarChar(80)
+  errorMessage      String?                        @db.Text
+  completedAt       DateTime?
+  chapters          AiQuestionGenerationChapter[]
+  sources           AiQuestionGenerationSource[]
+  items             AiQuestionGenerationItem[]
+  createdAt         DateTime                       @default(now())
+  updatedAt         DateTime                       @updatedAt
+
+  @@unique([createdById, idempotencyKey])
+  @@index([status, nextAttemptAt, createdAt])
+  @@index([createdById, status, createdAt])
+  @@index([subjectId, createdAt])
+  @@index([leaseOwnerToken, leasedUntil])
+}
+
+model AiQuestionGenerationChapter {
+  jobId     String
+  job       AiQuestionGenerationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   SubjectChapter          @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  createdAt DateTime                @default(now())
+
+  @@id([jobId, chapterId])
+  @@index([chapterId])
+}
+
+model AiQuestionGenerationSource {
+  id                String                        @id @default(cuid())
+  jobId             String
+  job               AiQuestionGenerationJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  ordinal           Int
+  knowledgeNodeId   String?
+  knowledgeNode     KnowledgeNode?                @relation(fields: [knowledgeNodeId], references: [id], onDelete: SetNull)
+  libraryId         String                        @db.VarChar(191)
+  documentId        String                        @db.VarChar(191)
+  documentVersionId String                        @db.VarChar(191)
+  libraryChapterId  String                        @db.VarChar(191)
+  nodeTitle         String                        @db.VarChar(200)
+  nodeTitleMarkdown String                        @db.VarChar(4096)
+  breadcrumb        String                        @db.VarChar(1000)
+  nodePath          String                        @db.VarChar(1000)
+  contentHash       String                        @db.Char(64)
+  chunkManifest     Json
+  evidenceContent   String                        @db.LongText
+  createdAt         DateTime                      @default(now())
+  questionSources   QuizQuestionKnowledgeSource[]
+
+  @@unique([jobId, ordinal])
+  @@index([knowledgeNodeId])
+  @@index([documentVersionId])
+}
+
+model AiQuestionGenerationItem {
+  id                String                  @id @default(cuid())
+  jobId             String
+  job               AiQuestionGenerationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  ordinal           Int
+  questionId        String?                 @unique
+  question          QuizQuestion?           @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  generatedSnapshot Json
+  fingerprint       String                  @db.Char(64)
+  createdAt         DateTime                @default(now())
+
+  @@unique([jobId, ordinal])
+  @@index([fingerprint])
+}
+
+model QuizQuestionKnowledgeSource {
+  id                 String                      @id @default(cuid())
+  questionId         String
+  question           QuizQuestion                @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  sourceRevision     Int
+  ordinal            Int
+  knowledgeNodeId    String?
+  knowledgeNode      KnowledgeNode?              @relation(fields: [knowledgeNodeId], references: [id], onDelete: SetNull)
+  generationSourceId String?
+  generationSource   AiQuestionGenerationSource? @relation(fields: [generationSourceId], references: [id], onDelete: SetNull)
+  documentId         String                      @db.VarChar(191)
+  documentVersionId  String                      @db.VarChar(191)
+  libraryId          String                      @db.VarChar(191)
+  libraryChapterId   String                      @db.VarChar(191)
+  nodePathHash       String?                     @db.Char(64)
+  title              String                      @db.VarChar(200)
+  breadcrumb         String                      @db.VarChar(1000)
+  contentHash        String                      @db.Char(64)
+  evidenceContent    String                      @db.LongText
+  current            Boolean                     @default(true)
+  createdAt          DateTime                    @default(now())
+  supersededAt       DateTime?
+
+  @@unique([questionId, sourceRevision, ordinal], map: "QuizQSource_question_revision_ordinal_key")
+  @@index([knowledgeNodeId])
+  @@index([generationSourceId])
+  @@index([documentVersionId, current])
+  @@index([libraryId, current])
+  @@index([documentId, nodePathHash, current], map: "QuizQSource_document_path_current_idx")
+}
+
+model QuizQuestionReviewEvent {
+  id               String                   @id @default(cuid())
+  questionId       String
+  question         QuizQuestion             @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  reviewerId       String
+  reviewer         User                     @relation("QuizQuestionReviewer", fields: [reviewerId], references: [id], onDelete: Restrict)
+  action           QuizQuestionReviewAction
+  expectedRevision Int
+  note             String?                  @db.VarChar(1000)
+  beforeSnapshot   Json?
+  afterSnapshot    Json?
+  fieldDiff        Json?
+  sourceRevision   Int
+  createdAt        DateTime                 @default(now())
+
+  @@index([questionId, createdAt])
+  @@index([reviewerId, createdAt])
+}
+
+model QuizImportJob {
+  id                         String                    @id @default(cuid())
+  createdById                String
+  createdBy                  User                      @relation(fields: [createdById], references: [id])
+  confirmedById              String?
+  fileType                   QuizImportFileType
+  mode                       QuizImportMode
+  sourceObjectKey            String                    @unique @db.VarChar(500)
+  sourceName                 String                    @db.VarChar(255)
+  sourceSize                 Int
+  sourceSha256               String                    @db.Char(64)
+  createMissingChapters      Boolean                   @default(false)
+  targetSubjectId            String?                   @db.VarChar(191)
+  targetPastPaperId          String?                   @db.VarChar(191)
+  pastPaperTitle             String?                   @db.VarChar(160)
+  pastPaperYear              Int?
+  status                     QuizImportStatus          @default(PREFLIGHT_PENDING)
+  stage                      String                    @default("QUEUED") @db.VarChar(80)
+  progressCurrent            Int                       @default(0)
+  progressTotal              Int                       @default(0)
+  questionCount              Int                       @default(0)
+  imageCount                 Int                       @default(0)
+  warningCount               Int                       @default(0)
+  errorCount                 Int                       @default(0)
+  summary                    Json?
+  reservedQuestionCount      Int                       @default(0)
+  attempts                   Int                       @default(0)
+  leaseOwnerToken            String?                   @db.VarChar(191)
+  leasedUntil                DateTime?
+  sourceCleanupStatus        ImportSourceCleanupStatus @default(RETAINED)
+  sourceCleanupAttempts      Int                       @default(0)
+  sourceCleanupNextAttemptAt DateTime?
+  sourceCleanupError         String?                   @db.Text
+  sourceCleanedAt            DateTime?
+  cancelRequestedAt          DateTime?
+  errorCode                  String?                   @db.VarChar(80)
+  errorMessage               String?                   @db.Text
+  importedCount              Int                       @default(0)
+  createdChapterCount        Int                       @default(0)
+  resultPastPaperId          String?                   @db.VarChar(191)
+  expiresAt                  DateTime
+  confirmedAt                DateTime?
+  completedAt                DateTime?
+  issues                     QuizImportIssue[]
+  assets                     QuizImportAsset[]
+  questions                  QuizQuestion[]
+  createdAt                  DateTime                  @default(now())
+  updatedAt                  DateTime                  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([createdById, createdAt])
+  @@index([expiresAt, status])
+  @@index([leaseOwnerToken, leasedUntil])
+  @@index([sourceCleanupStatus, sourceCleanupNextAttemptAt], map: "QuizImport_cleanup_due_idx")
+}
+
+model QuizCapacityCounter {
+  singletonId       Int      @id @default(1)
+  activeQuestions   Int      @default(0)
+  reservedQuestions Int      @default(0)
+  updatedAt         DateTime @updatedAt
+}
+
+model QuizImportIssue {
+  id        Int                     @id @default(autoincrement())
+  importId  String
+  importJob QuizImportJob           @relation(fields: [importId], references: [id], onDelete: Cascade)
+  severity  QuizImportIssueSeverity
+  code      String                  @db.VarChar(80)
+  rowNumber Int?
+  filePath  String?                 @db.VarChar(500)
+  field     String?                 @db.VarChar(100)
+  message   String                  @db.VarChar(500)
+  createdAt DateTime                @default(now())
+
+  @@index([importId, severity, id])
+}
+
+model QuizImportAsset {
+  id             String                @id @default(cuid())
+  importId       String
+  importJob      QuizImportJob         @relation(fields: [importId], references: [id], onDelete: Cascade)
+  rowNumber      Int
+  filePath       String                @db.VarChar(500)
+  caption        String                @default("") @db.VarChar(300)
+  sortOrder      Int
+  plannedPhotoId String                @unique @db.VarChar(191)
+  objectKey      String?               @unique @db.VarChar(500)
+  mimeType       String?               @db.VarChar(100)
+  size           Int?
+  width          Int?
+  height         Int?
+  status         QuizImportAssetStatus @default(PLANNED)
+  cleanupError   String?               @db.Text
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@unique([importId, filePath])
+  @@unique([importId, rowNumber, sortOrder])
+  @@index([importId, status])
+}
+
+model QuizPaper {
+  id            String         @id @default(cuid())
+  title         String         @db.VarChar(160)
+  legacySubject String?        @map("subject") @db.VarChar(100)
+  subjectId     String
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  year          Int?
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  questions     QuizQuestion[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([subjectId, year, createdAt])
+}
+
+model QuizQuestionChapter {
+  questionId String
+  question   QuizQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  chapterId  String
+  chapter    SubjectChapter @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  createdAt  DateTime       @default(now())
+
+  @@id([questionId, chapterId])
+  @@index([chapterId, questionId])
+}
+
+model QuizQuestionPhoto {
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  photoId    String
+  photo      Photo        @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  sortOrder  Int          @default(0)
+  createdAt  DateTime     @default(now())
+
+  @@id([questionId, photoId])
+  @@index([photoId])
+}
+
+model QuizAttempt {
+  id                              String                     @id @default(cuid())
+  userId                          String
+  user                            User                       @relation(fields: [userId], references: [id])
+  snapshot                        Json
+  answers                         Json?
+  results                         Json?
+  score                           Int?
+  total                           Int
+  lifecycleStatus                 QuizAttemptStatus?
+  draftRevision                   Int                        @default(0)
+  position                        Int                        @default(0)
+  savedAt                         DateTime?
+  expiresAt                       DateTime?
+  abandonedAt                     DateTime?
+  gradingOwnerToken               String?                    @db.VarChar(191)
+  gradingLeasedUntil              DateTime?
+  submissionHash                  String?                    @db.Char(64)
+  gradingError                    String?                    @db.VarChar(500)
+  submittedAt                     DateTime?
+  knowledgeStateAppliedAt         DateTime?
+  knowledgeStateRevision          Int?
+  dailyPracticePlanRevisionId     String?                    @unique
+  dailyPracticePlanRevision       DailyPracticePlanRevision? @relation(fields: [dailyPracticePlanRevisionId], references: [id], onDelete: SetNull)
+  initializationCheckpointProfile UserPracticeProfile?       @relation("UserPracticeInitializationCheckpoint")
+  createdAt                       DateTime                   @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, submittedAt, id])
+  @@index([knowledgeStateAppliedAt, submittedAt, id])
+  @@index([userId, lifecycleStatus, expiresAt])
+  @@index([gradingOwnerToken, gradingLeasedUntil])
+  @@index([lifecycleStatus, expiresAt, id], map: "QuizAttempt_lifecycle_expiry_id_idx")
+  @@index([lifecycleStatus, abandonedAt, id], map: "QuizAttempt_lifecycle_abandoned_id_idx")
+}
+
+model QuizWrongQuestion {
+  id                  String                     @id @default(cuid())
+  userId              String
+  user                User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId          String
+  type                QuestionType
+  typeLabel           String                     @db.VarChar(100)
+  subjectId           String
+  category            QuizQuestionCategory
+  origin              QuizQuestionOrigin
+  prompt              String                     @db.Text
+  crossChapter        Boolean                    @default(false)
+  isPastPaper         Boolean                    @default(false)
+  snapshot            Json
+  wrongCount          Int                        @default(1)
+  lastScore           Int?
+  lastWrongAnswer     String?                    @db.Text
+  lastFeedback        String?                    @db.Text
+  lastCriterionScores Json?
+  lastWrongAt         DateTime
+  chapters            QuizWrongQuestionChapter[]
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+
+  @@unique([userId, questionId])
+  @@index([userId, lastWrongAt])
+  @@index([userId, subjectId, typeLabel])
+  @@index([userId, origin, lastWrongAt])
+}
+
+model QuizWrongQuestionChapter {
+  wrongQuestionId String
+  wrongQuestion   QuizWrongQuestion @relation(fields: [wrongQuestionId], references: [id], onDelete: Cascade)
+  chapterId       String
+
+  @@id([wrongQuestionId, chapterId])
+  @@index([chapterId, wrongQuestionId])
+}
+
+model DailyPracticeSettings {
+  singletonId Int      @id @default(1)
+  enabled     Boolean  @default(false)
+  revision    Int      @default(0)
+  reason      String?  @db.VarChar(200)
+  updatedById String?
+  updatedBy   User?    @relation("DailyPracticeSettingsUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([updatedById, updatedAt])
+}
+
+model DailyPracticeServicePause {
+  id            String    @id @default(cuid())
+  startsAt      DateTime
+  endsAt        DateTime
+  reason        String    @db.VarChar(200)
+  createdById   String
+  createdBy     User      @relation("DailyPracticePauseCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  cancelledAt   DateTime?
+  cancelledById String?
+  cancelledBy   User?     @relation("DailyPracticePauseCanceller", fields: [cancelledById], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([cancelledAt, startsAt, endsAt])
+  @@index([startsAt, endsAt])
+  @@index([createdAt, id])
+  @@index([createdById, createdAt])
+}
+
+model TeachingProgress {
+  id                    String                     @id @default(cuid())
+  subjectId             String
+  subject               Subject                    @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  version               Int
+  effectivePracticeDate DateTime                   @db.Date
+  basedOnProgressId     String?
+  basedOnProgress       TeachingProgress?          @relation("TeachingProgressHistory", fields: [basedOnProgressId], references: [id], onDelete: Restrict)
+  derivedProgresses     TeachingProgress[]         @relation("TeachingProgressHistory")
+  changeType            TeachingProgressChangeType
+  scopeHash             String                     @db.Char(64)
+  note                  String?                    @db.VarChar(1000)
+  correctionReason      String?                    @db.VarChar(1000)
+  publishedById         String
+  publishedBy           User                       @relation("TeachingProgressPublisher", fields: [publishedById], references: [id], onDelete: Restrict)
+  publishedAt           DateTime                   @default(now())
+  nodes                 TeachingProgressNode[]
+
+  @@unique([subjectId, version])
+  @@index([effectivePracticeDate, subjectId, publishedAt], map: "TeachingProgress_effective_subject_published_idx")
+  @@index([basedOnProgressId])
+  @@index([publishedById, publishedAt])
+}
+
+model TeachingProgressNode {
+  id                      String            @id @default(cuid())
+  progressId              String
+  progress                TeachingProgress  @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  libraryId               String
+  library                 KnowledgeLibrary  @relation(fields: [libraryId], references: [id], onDelete: Restrict)
+  documentId              String
+  document                KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  nodePathHash            String            @db.Char(64)
+  currentKnowledgeNodeId  String?
+  currentKnowledgeNode    KnowledgeNode?    @relation("TeachingProgressCurrentKnowledgeNode", fields: [currentKnowledgeNodeId], references: [id], onDelete: SetNull)
+  titleSnapshot           String            @db.VarChar(200)
+  breadcrumbSnapshot      String            @db.VarChar(1000)
+  firstTaughtDate         DateTime          @db.Date
+  sourceDocumentVersionId String            @db.VarChar(191)
+  contentHashSnapshot     String            @db.Char(64)
+  createdAt               DateTime          @default(now())
+
+  @@unique([progressId, documentId, nodePathHash], map: "TeachingProgressNode_progress_document_path_key")
+  @@index([documentId, nodePathHash])
+  @@index([libraryId, documentId])
+  @@index([currentKnowledgeNodeId])
+}
+
+model DailyPracticeFixedAssignment {
+  id                  String                         @id @default(cuid())
+  practiceDate        DateTime                       @db.Date
+  revision            Int
+  basedOnAssignmentId String?
+  basedOnAssignment   DailyPracticeFixedAssignment?  @relation("DailyPracticeFixedAssignmentHistory", fields: [basedOnAssignmentId], references: [id], onDelete: Restrict)
+  derivedAssignments  DailyPracticeFixedAssignment[] @relation("DailyPracticeFixedAssignmentHistory")
+  assignmentHash      String                         @db.Char(64)
+  note                String?                        @db.VarChar(1000)
+  publishedById       String
+  publishedBy         User                           @relation("DailyPracticeFixedAssignmentPublisher", fields: [publishedById], references: [id], onDelete: Restrict)
+  publishedAt         DateTime                       @default(now())
+  questions           DailyPracticeFixedQuestion[]
+  cycles              DailyPracticeCycle[]
+
+  @@unique([practiceDate, revision])
+  @@index([practiceDate, publishedAt])
+  @@index([basedOnAssignmentId])
+  @@index([publishedById, publishedAt])
+}
+
+model DailyPracticeFixedQuestion {
+  id                     String                       @id @default(cuid())
+  assignmentId           String
+  assignment             DailyPracticeFixedAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  ordinal                Int
+  questionId             String
+  question               QuizQuestion                 @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  questionReviewRevision Int
+  promptHash             String                       @db.Char(64)
+  createdAt              DateTime                     @default(now())
+
+  @@unique([assignmentId, ordinal])
+  @@unique([assignmentId, questionId])
+  @@index([questionId, assignmentId])
+}
+
+model UserPracticeProfile {
+  userId                      String                           @id
+  user                        User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stateRevision               Int                              @default(0)
+  initializationStatus        UserPracticeInitializationStatus @default(PENDING)
+  initializedThroughAttemptId String?                          @unique
+  initializedThroughAttempt   QuizAttempt?                     @relation("UserPracticeInitializationCheckpoint", fields: [initializedThroughAttemptId], references: [id], onDelete: SetNull)
+  initializedThroughAttemptAt DateTime?
+  lastAppliedAttemptAt        DateTime?
+  attemptCount                Int                              @default(0)
+  questionCount               Int                              @default(0)
+  correctCount                Int                              @default(0)
+  wrongCount                  Int                              @default(0)
+  initializationError         String?                          @db.VarChar(500)
+  leaseOwnerToken             String?                          @db.VarChar(191)
+  leasedUntil                 DateTime?
+  createdAt                   DateTime                         @default(now())
+  updatedAt                   DateTime                         @updatedAt
+
+  @@index([initializationStatus, leasedUntil, updatedAt], map: "UserPracticeProfile_status_lease_updated_idx")
+  @@index([leaseOwnerToken, leasedUntil])
+  @@index([lastAppliedAttemptAt])
+}
+
+model UserKnowledgeState {
+  id                     String            @id @default(cuid())
+  userId                 String
+  user                   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentId             String
+  document               KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  nodePathHash           String            @db.Char(64)
+  currentKnowledgeNodeId String?
+  currentKnowledgeNode   KnowledgeNode?    @relation("UserKnowledgeCurrentNode", fields: [currentKnowledgeNodeId], references: [id], onDelete: SetNull)
+  subjectId              String
+  subject                Subject           @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  libraryId              String
+  library                KnowledgeLibrary  @relation(fields: [libraryId], references: [id], onDelete: Restrict)
+  attemptCount           Int               @default(0)
+  correctCount           Int               @default(0)
+  wrongCount             Int               @default(0)
+  masteryBps             Int               @default(0)
+  correctStreak          Int               @default(0)
+  lastScoreBps           Int?
+  lastPracticedAt        DateTime?
+  lastWrongAt            DateTime?
+  nextReviewAt           DateTime?
+  missingRubricPoints    Json?
+  lastQuestionId         String?
+  lastQuestion           QuizQuestion?     @relation("UserKnowledgeLastQuestion", fields: [lastQuestionId], references: [id], onDelete: SetNull)
+  version                Int               @default(1)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+
+  @@unique([userId, documentId, nodePathHash], map: "UserKnowledgeState_user_document_path_key")
+  @@index([userId, nextReviewAt])
+  @@index([userId, lastWrongAt])
+  @@index([documentId, nodePathHash])
+  @@index([currentKnowledgeNodeId])
+  @@index([lastQuestionId])
+}
+
+model UserChapterState {
+  id                  String         @id @default(cuid())
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectChapterId    String
+  subjectChapter      SubjectChapter @relation(fields: [subjectChapterId], references: [id], onDelete: Restrict)
+  attemptCount        Int            @default(0)
+  correctCount        Int            @default(0)
+  wrongCount          Int            @default(0)
+  masteryBps          Int            @default(0)
+  correctStreak       Int            @default(0)
+  lastScoreBps        Int?
+  lastPracticedAt     DateTime?
+  lastWrongAt         DateTime?
+  nextReviewAt        DateTime?
+  missingRubricPoints Json?
+  lastQuestionId      String?
+  lastQuestion        QuizQuestion?  @relation("UserChapterLastQuestion", fields: [lastQuestionId], references: [id], onDelete: SetNull)
+  version             Int            @default(1)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@unique([userId, subjectChapterId])
+  @@index([userId, nextReviewAt])
+  @@index([userId, lastWrongAt])
+  @@index([subjectChapterId, masteryBps])
+  @@index([lastQuestionId])
+}
+
+model DailyPracticeCycle {
+  id                        String                        @id @default(cuid())
+  practiceDate              DateTime                      @unique @db.Date
+  baselineAt                DateTime
+  deadlineAt                DateTime
+  candidateCutoffAt         DateTime
+  status                    DailyPracticeCycleStatus      @default(BUILDING)
+  settingsRevision          Int
+  progressSetHash           String                        @db.Char(64)
+  progressSnapshot          Json
+  fixedAssignmentId         String?
+  fixedAssignment           DailyPracticeFixedAssignment? @relation(fields: [fixedAssignmentId], references: [id], onDelete: Restrict)
+  frozenFixedAssignmentHash String                        @db.Char(64)
+  poolStats                 Json?
+  counts                    Json?
+  leaseOwnerToken           String?                       @db.VarChar(191)
+  leasedUntil               DateTime?
+  lastErrorCategory         String?                       @db.VarChar(80)
+  lastErrorMessage          String?                       @db.VarChar(500)
+  refreezeRequestedAt       DateTime?
+  refreezeRequestedById     String?                       @db.VarChar(191)
+  days                      DailyPracticeDay[]
+  createdAt                 DateTime                      @default(now())
+  updatedAt                 DateTime                      @updatedAt
+
+  @@index([status, leasedUntil, baselineAt])
+  @@index([leaseOwnerToken, leasedUntil])
+  @@index([fixedAssignmentId])
+}
+
+model DailyPracticeDay {
+  id                    String                         @id @default(cuid())
+  cycleId               String
+  cycle                 DailyPracticeCycle             @relation(fields: [cycleId], references: [id], onDelete: Restrict)
+  userId                String
+  user                  User                           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  practiceDate          DateTime                       @db.Date
+  scheduledAt           DateTime
+  deadlineAt            DateTime
+  status                DailyPracticeDayStatus         @default(PENDING)
+  profileRevision       Int
+  progressSetHash       String                         @db.Char(64)
+  candidateSnapshot     Json?
+  fixedQuestionSnapshot Json?
+  candidateHash         String?                        @db.Char(64)
+  activeRevisionId      String?                        @unique
+  activeRevision        DailyPracticePlanRevision?     @relation("DailyPracticeActiveRevision", fields: [activeRevisionId], references: [id], onDelete: SetNull)
+  revisions             DailyPracticePlanRevision[]    @relation("DailyPracticeDayRevisions")
+  strategyAttempts      DailyPracticeStrategyAttempt[]
+  leaseOwnerToken       String?                        @db.VarChar(191)
+  leasedUntil           DateTime?
+  startedAt             DateTime?
+  completedAt           DateTime?
+  lastErrorCategory     String?                        @db.VarChar(80)
+  lastErrorMessage      String?                        @db.VarChar(500)
+  createdAt             DateTime                       @default(now())
+  updatedAt             DateTime                       @updatedAt
+
+  @@unique([userId, practiceDate])
+  @@index([status, scheduledAt, leasedUntil], map: "DailyPracticeDay_status_schedule_lease_idx")
+  @@index([cycleId, status])
+  @@index([userId, status, practiceDate])
+  @@index([leaseOwnerToken, leasedUntil])
+}
+
+model DailyPracticePlanRevision {
+  id                              String                         @id @default(cuid())
+  dayId                           String
+  day                             DailyPracticeDay               @relation("DailyPracticeDayRevisions", fields: [dayId], references: [id], onDelete: Cascade)
+  activeForDay                    DailyPracticeDay?              @relation("DailyPracticeActiveRevision")
+  revision                        Int
+  trigger                         DailyPracticePlanTrigger
+  promptVersion                   String                         @db.VarChar(80)
+  generationSource                DailyPracticeGenerationSource  @default(NO_MODEL)
+  inputHash                       String?                        @db.Char(64)
+  outputHash                      String?                        @db.Char(64)
+  previousSummarySourceRevisionId String?
+  previousSummarySourceRevision   DailyPracticePlanRevision?     @relation("DailyPracticePreviousSummarySource", fields: [previousSummarySourceRevisionId], references: [id], onDelete: SetNull)
+  previousSummaryConsumers        DailyPracticePlanRevision[]    @relation("DailyPracticePreviousSummarySource")
+  previousLearningSummarySnapshot Json?
+  validatedOutput                 Json?
+  summarySnapshot                 Json?
+  suggestionEvaluation            Json?
+  degradedReason                  String?                        @db.VarChar(500)
+  createdById                     String?
+  createdBy                       User?                          @relation("DailyPracticePlanRevisionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  generatedAt                     DateTime?
+  publishedAt                     DateTime?
+  items                           DailyPracticePlanItem[]
+  strategyAttempts                DailyPracticeStrategyAttempt[]
+  appliedSuggestions              DailyPracticeSuggestion[]
+  quizAttempt                     QuizAttempt?
+  createdAt                       DateTime                       @default(now())
+
+  @@unique([dayId, revision])
+  @@index([dayId, trigger, generatedAt])
+  @@index([generationSource, generatedAt])
+  @@index([previousSummarySourceRevisionId])
+  @@index([createdById, createdAt])
+}
+
+model DailyPracticePlanItem {
+  id                     String                      @id @default(cuid())
+  revisionId             String
+  revision               DailyPracticePlanRevision   @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  ordinal                Int
+  source                 DailyPracticePlanItemSource
+  questionId             String
+  question               QuizQuestion                @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  questionReviewRevision Int
+  sourceRevision         Int?
+  reason                 String                      @db.VarChar(500)
+  evidenceRefs           Json
+  createdAt              DateTime                    @default(now())
+
+  @@unique([revisionId, ordinal])
+  @@unique([revisionId, questionId])
+  @@index([questionId, revisionId])
+  @@index([revisionId, source])
+}
+
+model DailyPracticeSuggestion {
+  id                 String                        @id @default(cuid())
+  targetUserId       String
+  targetUser         User                          @relation("DailyPracticeSuggestionTarget", fields: [targetUserId], references: [id], onDelete: Restrict)
+  submittedById      String
+  submittedBy        User                          @relation("DailyPracticeSuggestionSubmitter", fields: [submittedById], references: [id], onDelete: Restrict)
+  targetPracticeDate DateTime                      @db.Date
+  userQuotaKey       String?                       @unique @db.VarChar(191)
+  payload            Json
+  status             DailyPracticeSuggestionStatus @default(PENDING)
+  supersedesId       String?
+  supersedes         DailyPracticeSuggestion?      @relation("DailyPracticeSuggestionSupersession", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy       DailyPracticeSuggestion[]     @relation("DailyPracticeSuggestionSupersession")
+  appliedRevisionId  String?
+  appliedRevision    DailyPracticePlanRevision?    @relation(fields: [appliedRevisionId], references: [id], onDelete: SetNull)
+  createdAt          DateTime                      @default(now())
+  updatedAt          DateTime                      @updatedAt
+
+  @@index([targetUserId, targetPracticeDate, createdAt], map: "DailySuggestion_target_date_created_idx")
+  @@index([status, targetPracticeDate, createdAt])
+  @@index([submittedById, createdAt])
+  @@index([supersedesId])
+  @@index([appliedRevisionId])
+}
+
+model DailyPracticeStrategyAttempt {
+  id             String                             @id @default(cuid())
+  dayId          String
+  day            DailyPracticeDay                   @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  planRevisionId String
+  planRevision   DailyPracticePlanRevision          @relation(fields: [planRevisionId], references: [id], onDelete: Cascade)
+  strategy       AiTaskStrategy
+  status         DailyPracticeStrategyAttemptStatus @default(PENDING)
+  aiInvocationId String?                            @unique
+  aiInvocation   AiInvocation?                      @relation(fields: [aiInvocationId], references: [id], onDelete: SetNull)
+  errorCategory  String?                            @db.VarChar(80)
+  errorMessage   String?                            @db.VarChar(500)
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime                           @default(now())
+  updatedAt      DateTime                           @updatedAt
+
+  @@unique([dayId, planRevisionId, strategy], map: "DailyStrategyAttempt_day_revision_strategy_key")
+  @@index([status, createdAt])
+  @@index([planRevisionId, status])
+}
+
+model AiConversation {
+  id              String                         @id @default(cuid())
+  userId          String
+  user            User                           @relation(fields: [userId], references: [id])
+  subjectId       String?
+  subject         Subject?                       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  knowledgeMode   KnowledgeConversationMode?
+  title           String                         @db.VarChar(160)
+  messages        AiMessage[]
+  libraries       AiConversationLibrary[]
+  libraryChapters AiConversationLibraryChapter[]
+  createdAt       DateTime                       @default(now())
+  updatedAt       DateTime                       @updatedAt
+
+  @@index([userId, updatedAt])
+  @@index([userId, updatedAt, id], map: "AiConversation_user_updated_id_idx")
+  @@index([subjectId, knowledgeMode])
+}
+
+model AiConversationLibrary {
+  conversationId String
+  conversation   AiConversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  libraryId      String
+  library        KnowledgeLibrary @relation(fields: [libraryId], references: [id], onDelete: Restrict)
+  createdAt      DateTime         @default(now())
+
+  @@id([conversationId, libraryId])
+  @@index([libraryId, conversationId])
+}
+
+model AiConversationLibraryChapter {
+  conversationId   String
+  conversation     AiConversation          @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  libraryChapterId String
+  libraryChapter   KnowledgeLibraryChapter @relation(fields: [libraryChapterId], references: [id], onDelete: Restrict)
+  createdAt        DateTime                @default(now())
+
+  @@id([conversationId, libraryChapterId])
+  @@index([libraryChapterId, conversationId])
+}
+
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String         @db.VarChar(20)
+  content        String         @db.LongText
+  citations      Json?
+  attachments    Json?
+  model          String?        @db.VarChar(120)
+  tokenCount     Int?
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([conversationId, createdAt, id], map: "AiMessage_conversation_created_id_idx")
+}

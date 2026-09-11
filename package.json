@@ -1,0 +1,23 @@
+{
+  "name": "bmc3-class-site",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @bmc3/web --filter @bmc3/api --filter @bmc3/worker dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test && pnpm test:infra",
+    "test:infra": "node --test infra/tests/*.spec.mjs",
+    "release:check": "node infra/check-release.mjs",
+    "lint": "pnpm -r lint",
+    "db:generate": "pnpm --filter @bmc3/api prisma:generate",
+    "db:migrate": "pnpm --filter @bmc3/api prisma:deploy",
+    "db:seed": "pnpm --filter @bmc3/api prisma:seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "yaml": "2.8.3"
+  }
+}
