@@ -30,6 +30,7 @@ import {
 
 const LEASE_MS = 180_000;
 const MAX_ATTEMPTS = 3;
+const REVIEW_OUTPUT_TOKEN_BUDGETS = [8_192, 16_384, 32_768] as const;
 const FILE_EXPIRY_SECONDS = 3_600;
 let activeLease: { jobId: string; ownerToken: string } | null = null;
 
@@ -175,6 +176,7 @@ export async function processNextCreditHourReview(
       revision,
       fileBlocks,
       reviewContext,
+      job.attempts,
     );
     reservation = await reserveAiInvocation(prisma, {
       taskType: 'CREDIT_HOUR_REVIEW',
@@ -421,6 +423,7 @@ function reviewRequest(
   >['submission']['revisions'][number],
   fileBlocks: Array<{ type: 'file'; file_id: string }>,
   context: ReviewContext,
+  attempt: number,
 ): AiRequest {
   const schema = {
     decision: 'APPROVE, REJECT, or MANUAL_REVIEW',
@@ -477,7 +480,8 @@ function reviewRequest(
         ],
       },
     ],
-    maxOutputTokens: 1_200,
+    // Thinking shares the output budget; retries need room to reach the final JSON.
+    maxOutputTokens: REVIEW_OUTPUT_TOKEN_BUDGETS[Math.min(Math.max(attempt, 1), MAX_ATTEMPTS) - 1]!,
     timeoutMs: envInteger(
       'AI_CREDIT_HOUR_REVIEW_TIMEOUT_MS',
       120_000,

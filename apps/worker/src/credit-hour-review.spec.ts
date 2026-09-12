@@ -427,6 +427,41 @@ function reviewWorkerFixture(content: string, attempts = 1) {
 describe('credit-hour review execution', () => {
   beforeEach(() => jest.clearAllMocks());
 
+  it('recovers from an exhausted thinking budget on the next scheduled attempt', async () => {
+    for (const attempt of [1, 2]) {
+      jest.clearAllMocks();
+      const fixture = reviewWorkerFixture(JSON.stringify(valid), attempt);
+      fixture.client.complete.mockImplementation(async (...args: unknown[]) => {
+        const request = args[0] as { maxOutputTokens: number };
+        if (request.maxOutputTokens < 10_000) {
+          throw new AiClientError(
+            `模型服务未返回有效内容 (finish_reason=length, completion_tokens=${request.maxOutputTokens})`,
+            'INVALID_RESPONSE',
+            false,
+          );
+        }
+        return fixture.completion;
+      });
+      await processNextCreditHourReview(fixture.prisma as never, { client: fixture.client });
+      expect(fixture.client.complete).toHaveBeenCalledTimes(1);
+      const reserved = jest.mocked(reserveAiInvocation).mock.calls[0]![1];
+      expect(fixture.client.complete).toHaveBeenCalledWith(reserved.request);
+      expect(fixture.client.deleteFile).toHaveBeenCalledWith('file-1');
+      if (attempt === 1) {
+        expect(fixture.transaction.creditHourSubmission.updateMany).not.toHaveBeenCalled();
+        expect(fixture.transaction.creditHourReviewJob.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+          data: expect.objectContaining({ status: 'RETRY_PENDING', errorCategory: 'INVALID_RESPONSE' }),
+        }));
+        expect(finishAiInvocationFailure).toHaveBeenCalledTimes(1);
+      } else {
+        expect(fixture.transaction.creditHourSubmission.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+          data: expect.objectContaining({ status: 'APPROVED' }),
+        }));
+        expect(finishAiInvocationSuccess).toHaveBeenCalledTimes(1);
+      }
+    }
+  });
+
   it.each(['APPROVE', 'MANUAL_REVIEW'])('completes a manual referral from %s without retrying or assigning a final decision', async (modelDecision) => {
     const fixture = reviewWorkerFixture(JSON.stringify({
       ...valid,
@@ -479,6 +514,9 @@ describe('credit-hour review execution', () => {
     expect(finishAiInvocationFailure).toHaveBeenCalledTimes(1);
     expect(finishAiInvocationSuccess).not.toHaveBeenCalled();
     expect(fixture.client.deleteFile).toHaveBeenCalledWith('file-1');
+    expect(fixture.client.complete).toHaveBeenCalledWith(expect.objectContaining({
+      maxOutputTokens: attempts === 1 ? 8_192 : 32_768,
+    }));
   });
 
   it('does not label an upstream timeout as authenticity risk', async () => {

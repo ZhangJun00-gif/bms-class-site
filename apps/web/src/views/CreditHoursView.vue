@@ -330,7 +330,7 @@ function createIdempotencyKey() {
             </div>
             <EmptyState v-if="!loading && !mine.length" title="暂无申报记录" hint="提交后可在这里查看审核状态。" />
             <div v-else-if="loading" class="loading-row"><LoaderCircle :size="18" class="spin" aria-hidden="true" />加载中</div>
-            <ul v-else class="record-list mine-list">
+            <ul v-else class="record-list mine-list" tabindex="0" aria-labelledby="history-heading">
               <li v-for="item in mine" :key="item.id">
                 <div class="record-main">
                   <div><strong>{{ item.activityName }}</strong><span>{{ recordTypeLabel(item.type) }} · {{ formatDate(item.createdAt) }}</span></div>
@@ -457,6 +457,14 @@ tr.self { background: var(--accent-soft); }
 .danger-text { color: var(--danger); }
 .work-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-8); padding-top: var(--space-8); }
 .submission-tool, .history-tool { min-width: 0; }
+.history-tool { display: flex; flex-direction: column; min-height: 0; }
+.history-tool > .section-heading { flex: none; }
+.mine-list { min-height: 0; overflow-y: auto; scrollbar-gutter: stable; align-content: start; }
+/* Let the submission form determine the shared row height. */
+@media (min-width: 901px) {
+  .history-tool { contain: size; }
+  .mine-list { flex: 1; }
+}
 form { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: var(--space-4); }
 .submission-type-field { display: grid; gap: 7px; color: var(--ink-soft); font-size: 13px; font-weight: 600; }
 .submission-type-switch { display: inline-flex; width: fit-content; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: var(--radius-s); background: var(--surface-muted); }
@@ -502,7 +510,10 @@ textarea { resize: vertical; }
 .load-error { justify-content: space-between; padding: var(--space-4); border: 1px solid var(--danger-border); border-radius: var(--radius-s); color: var(--danger); background: var(--danger-bg); }
 .spin { animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 900px) { .work-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .work-grid { grid-template-columns: 1fr; }
+  .mine-list { max-height: 36rem; }
+}
 @media (max-width: 560px) {
   .public-record-groups { grid-template-columns: 1fr; }
   .submission-type-switch { display: flex; width: 100%; box-sizing: border-box; }
