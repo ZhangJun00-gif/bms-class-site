@@ -417,3 +417,4 @@ const selected = ref<NewsSummary | null>(null);
   }
 }
 </style>
+
